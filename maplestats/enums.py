@@ -2,6 +2,21 @@ from enum import Enum, auto
 from typing import Dict, Union, Set
 
 
+class World(Enum):
+    """Enum representing all worlds."""
+    BERA = auto()
+    SCANIA = auto()
+    AURORA = auto()
+    ELYSIUM = auto()
+    LUNA = auto()
+    REBOOT = auto()
+    REBOOT_EU = auto()
+
+    @property
+    def is_reboot(self):
+        return "REBOOT" in self.name
+
+
 class Stat(Enum):
     """Enum representing all types of stats."""
     ALL = auto()
@@ -115,3 +130,46 @@ DEX_PIRATES: Set[CharClass] = {
     CharClass.JETT,
     CharClass.ANGELIC_BUSTER,
 }
+
+
+class EquipType(Enum):
+    """Enum representing equipment types that can give stats.
+
+    RING_1 is the default ring equip slot.
+    """
+    WEAPON = auto()
+    SECONDARY = auto()
+    EMBLEM = auto()
+    HAT = auto()
+    TOP = auto()
+    BOTTOM = auto()
+    SHOE = auto()
+    GLOVE = auto()
+    CAPE = auto()
+    SHOULDER = auto()
+    RING_1 = auto()
+    RING_2 = auto()
+    RING_3 = auto()
+    RING_4 = auto()
+    PENDANT_1 = auto()
+    PENDANT_2 = auto()
+    BELT = auto()
+    EARRING = auto()
+    FACE = auto()
+    EYE = auto()
+    POCKET = auto()
+    BADGE = auto()
+    MEDAL = auto()
+    ANDROID = auto()
+    HEART = auto()
+    TOTEM_1 = auto()
+    TOTEM_2 = auto()
+    TOTEM_3 = auto()
+    PET_EQUIP_1 = auto()
+    PET_EQUIP_2 = auto()
+    PET_EQUIP_3 = auto()
+    CASH_RING_1 = auto()
+    CASH_RING_2 = auto()
+    CASH_RING_3 = auto()
+    CASH_RING_4 = auto()
+    CASH_PENDANT = auto()
