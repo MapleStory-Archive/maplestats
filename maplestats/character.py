@@ -1,6 +1,5 @@
-from enum import Enum
 import json
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from maplestats.enums import (
     World, Stat, ClassBranch, CharClass, EquipType, EMPTY_INVENTORY)
@@ -92,7 +91,7 @@ class Character:
     def stats_from_equips(self) -> STATS_TYPING:
         return combine_stats(equip.stats for equip in self.equips)
 
-    def to_json(self, full: bool = False) -> Dict:
+    def to_json(self, full: bool = False) -> Dict[str, Any]:
         """Returns the JSON representation of this character.
 
         Args:
@@ -124,7 +123,7 @@ class Character:
                 new_v = {}
                 for a, b in v.items():
                     new_a = a.to_json if hasattr(a, "to_json") else a
-                    new_b = b.to_json if isinstance(b, "to_json") else b
+                    new_b = b.to_json if hasattr(b, "to_json") else b
                     new_v[new_a] = new_b
                 full_repr[k] = new_v
 
