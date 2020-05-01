@@ -92,6 +92,7 @@ class Character:
             'level': self.level,
             'char_class': self._char_class,
             'world': self._world,
+            'equips': self.equips,
         }
         if not full:
             return minimal_repr
@@ -102,9 +103,18 @@ class Character:
             'pure_main_stat': self.pure_main_stat,
             'pure_secondary_stat': self.pure_secondary_stat,
         }
+
+        # Convert enums to strings
         for k, v in full_repr.items():
             if isinstance(v, Enum):
                 full_repr[k] = v.name
+            if isinstance(v, dict):
+                new_v = {}
+                for a, b in v.items():
+                    new_a = a.name if isinstance(a, Enum) else a
+                    new_b = b.name if isinstance(b, Enum) else b
+                    new_v[new_a] = new_b
+                full_repr[k] = new_v
 
         return full_repr
 
