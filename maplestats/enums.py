@@ -52,6 +52,30 @@ class Stat(MapleStatsEnum):
     CRIT = auto()
     CRIT_DMG = auto()
     FLAT_DMG = auto()
+    BUFF_DURATION = auto()
+    STATUS_RESIST = auto()
+    STANCE = auto()
+    BONUS_EXP = auto()
+    DROP_RATE = auto()
+    EQUIP_DROP_RATE = auto()
+    IGNORE_ELEMENTAL_RESIST = auto()
+    SCROLL_SUCCESS_RATE = auto()
+    MONSTER_COLLECTION_ADD_CHANCE = auto()
+
+    @property
+    def default(self) -> Any:
+        if self in FLOAT_VALUED_STATS:
+            return 0.0
+        return 0
+
+
+FLOAT_VALUED_STATS: Set[Stat] = {
+    Stat.IED,
+    Stat.CRIT_DMG,
+    Stat.BONUS_EXP,
+    Stat.IGNORE_ELEMENTAL_RESIST,
+    Stat.SCROLL_SUCCESS_RATE
+}
 
 
 class ClassBranch(MapleStatsEnum):

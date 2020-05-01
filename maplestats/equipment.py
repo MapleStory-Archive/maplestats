@@ -37,5 +37,5 @@ class Equip:
             {stat: value} for stat, value in all_lines])
 
     @property
-    def stats(self):
+    def stats(self) -> STATS_TYPING:
         return self._stats
