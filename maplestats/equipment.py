@@ -11,13 +11,16 @@ class Equip:
             name: str,
             equip_type: Union[EquipType, str],
             base_stats: STATS_TYPING = None,
+            scroll_stats: STATS_TYPING = None,
             potential: List[Tuple[Stat, Any]] = None,
             bonus_potential: List[Tuple[Stat, Any]] = None,
             bonus_stats: List[Tuple[Stat, Any]] = None,
     ):
+        """Note: Stats from star force counts as scroll stats."""
         self.name = name
         self._equip_type = equip_type
         self._base_stats = base_stats if base_stats else {}
+        self._scroll_stats = scroll_stats if scroll_stats else {}
         self._potential = potential if potential else []
         self._bonus_potential = bonus_potential if bonus_potential else []
         self._bonus_stats = bonus_stats if bonus_stats else []
@@ -33,7 +36,7 @@ class Equip:
 
     def _get_stats(self) -> STATS_TYPING:
         all_lines = self._potential + self._bonus_potential + self._bonus_stats
-        return combine_stats([self._base_stats] + [
+        return combine_stats([self._base_stats, self._scroll_stats] + [
             {stat: value} for stat, value in all_lines])
 
     @property
