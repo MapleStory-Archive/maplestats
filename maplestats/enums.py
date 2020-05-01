@@ -1,8 +1,18 @@
 from enum import Enum, auto
-from typing import Dict, Union, Set
+from typing import Any, Dict, Set
 
 
-class World(Enum):
+class MapleStatsEnum(Enum):
+    """Base enum class for the MapleStats project."""
+
+    @classmethod
+    def maybe_parse(cls, name: Any):
+        if isinstance(name, cls):
+            return name
+        return cls[name.upper()]
+
+
+class World(MapleStatsEnum):
     """Enum representing all worlds."""
     BERA = auto()
     SCANIA = auto()
@@ -17,7 +27,7 @@ class World(Enum):
         return "REBOOT" in self.name
 
 
-class Stat(Enum):
+class Stat(MapleStatsEnum):
     """Enum representing all types of stats."""
     ALL = auto()
     STR = auto()
@@ -40,7 +50,7 @@ class Stat(Enum):
     FLAT_DMG = auto()
 
 
-class ClassBranch(Enum):
+class ClassBranch(MapleStatsEnum):
     """Enum representing the five class branches."""
     BEGINNER = auto()
     WARRIOR = auto()
@@ -50,7 +60,7 @@ class ClassBranch(Enum):
     PIRATE = auto()
 
 
-class CharClass(Enum):
+class CharClass(MapleStatsEnum):
     """Enum representing character classes."""
     BEGINNER = auto()
     ARAN = auto()
@@ -82,12 +92,6 @@ class CharClass(Enum):
     def branch(self) -> ClassBranch:
         """Returns the branch of this class."""
         return CLASS_TO_BRANCH[self]
-
-    @classmethod
-    def maybe_parse(cls, class_name: Union['CharClass', str]):
-        if isinstance(class_name, CharClass):
-            return class_name
-        return cls[class_name.upper()]
 
     @property
     def main_stat(self) -> Stat:
@@ -132,7 +136,7 @@ DEX_PIRATES: Set[CharClass] = {
 }
 
 
-class EquipType(Enum):
+class EquipType(MapleStatsEnum):
     """Enum representing equipment types that can give stats.
 
     RING_1 is the default ring equip slot.
@@ -173,3 +177,7 @@ class EquipType(Enum):
     CASH_RING_3 = auto()
     CASH_RING_4 = auto()
     CASH_PENDANT = auto()
+
+
+EMPTY_INVENTORY: Dict[EquipType, Any] = {
+    equip_type: None for equip_type in EquipType}

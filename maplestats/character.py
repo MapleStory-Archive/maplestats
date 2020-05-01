@@ -2,7 +2,8 @@ from enum import Enum
 import json
 from typing import Dict, Optional, Union
 
-from maplestats.enums import World, Stat, ClassBranch, CharClass
+from maplestats.enums import World, Stat, ClassBranch, CharClass, EquipType, EMPTY_INVENTORY
+from maplestats.equipment import Equip
 
 
 JOB_ADVANCEMENT_LEVEL_REQUIREMENTS = [10, 30, 60, 100, 200]
@@ -13,9 +14,10 @@ class Character:
     def __init__(
         self,
         name: str,
-        level: int,
-        char_class: Union[CharClass, str],
+        level: int = 1,
+        char_class: Union[CharClass, str] = CharClass.BEGINNER,
         world: World = None,
+        equips: Dict[Union[EquipType, str], Optional[Equip]] = None,
         *args,
         **kwargs,
     ):
@@ -24,22 +26,14 @@ class Character:
         assert 1 <= level <= 275, 'Level must be between 1 and 275'
 
         self.name = name
-        self._level = level
+        self.level = level
         self._char_class: CharClass = CharClass.maybe_parse(char_class)
         self._world = world
+        self.equips = _maybe_parse_equips(equips)
 
         self._in_reboot = world.is_reboot if world else False
         self._main_stat: Stat = self._char_class.main_stat
         self._secondary_stat: Stat = self._char_class.secondary_stat
-
-    @property
-    def world(self) -> World:
-        return self._world
-
-    @world.setter
-    def world(self, new_world: Optional[World]):
-        self.world = new_world
-        self._in_reboot = new_world.is_reboot if new_world else False
 
     @property
     def char_class(self) -> CharClass:
@@ -52,10 +46,19 @@ class Character:
         self._secondary_stat = self._char_class.secondary_stat
 
     @property
+    def world(self) -> World:
+        return self._world
+
+    @world.setter
+    def world(self, new_world: Optional[World]):
+        self.world = new_world
+        self._in_reboot = new_world.is_reboot if new_world else False
+
+    @property
     def job(self) -> int:
         """Job of this character"""
         for idx, lvl_req in enumerate(JOB_ADVANCEMENT_LEVEL_REQUIREMENTS):
-            if self._level < lvl_req:
+            if self.level < lvl_req:
                 return idx + 1
         return 5
 
@@ -66,7 +69,7 @@ class Character:
     @property
     def pure_main_stat(self) -> int:
         """Pure stat from leveling up"""
-        stat = 5 * self._level + 4
+        stat = 5 * self.level + 4
         if self.job >= 4:
             return stat + 10
         if self.job == 3:
@@ -86,7 +89,7 @@ class Character:
         """
         minimal_repr = {
             'name': self.name,
-            'level': self._level,
+            'level': self.level,
             'char_class': self._char_class,
             'world': self._world,
         }
@@ -116,3 +119,13 @@ class Character:
         with open(file_path, 'r') as f:
             json_repr = json.load(f)
         return cls(**json_repr)
+
+
+def _maybe_parse_equips(equips: Optional[Dict[Union[EquipType, str], Equip]]
+                        ) -> Dict[EquipType, Optional[Equip]]:
+    """Maybe parse equips."""
+    if not equips or not isinstance(equips, dict):
+        return EMPTY_INVENTORY
+
+    return {EquipType.maybe_parse(equip_type): equip
+            for equip_type, equip in equips.items()}
