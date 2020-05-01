@@ -215,3 +215,8 @@ WSE: Set[EquipType] = {
     EquipType.SECONDARY,
     EquipType.EMBLEM
 }
+
+
+class WeaponType(MapleStatsEnum):
+
+    KNUCKLE = auto()
