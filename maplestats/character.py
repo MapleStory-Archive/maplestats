@@ -2,8 +2,10 @@ from enum import Enum
 import json
 from typing import Dict, Optional, Union
 
-from maplestats.enums import World, Stat, ClassBranch, CharClass, EquipType, EMPTY_INVENTORY
+from maplestats.enums import (
+    World, Stat, ClassBranch, CharClass, EquipType, EMPTY_INVENTORY)
 from maplestats.equipment import Equip
+from maplestats.utils import STATS_TYPING, combine_stats
 
 
 JOB_ADVANCEMENT_LEVEL_REQUIREMENTS = [10, 30, 60, 100, 200]
@@ -12,14 +14,14 @@ JOB_ADVANCEMENT_LEVEL_REQUIREMENTS = [10, 30, 60, 100, 200]
 class Character:
 
     def __init__(
-        self,
-        name: str,
-        level: int = 1,
-        char_class: Union[CharClass, str] = CharClass.BEGINNER,
-        world: World = None,
-        equips: Dict[Union[EquipType, str], Optional[Equip]] = None,
-        *args,
-        **kwargs,
+            self,
+            name: str,
+            level: int = 1,
+            char_class: Union[CharClass, str] = CharClass.BEGINNER,
+            world: World = None,
+            equips: Dict[Union[EquipType, str], Optional[Equip]] = None,
+            *args,
+            **kwargs,
     ):
         del args
         del kwargs
@@ -80,6 +82,16 @@ class Character:
     def pure_secondary_stat(self) -> int:
         return 4
 
+    @property
+    def damage(self) -> int:
+        dmg = 50 if self._in_reboot else 0
+        dmg += self.stats_from_equips[Stat.DMG]
+        return dmg
+
+    @property
+    def stats_from_equips(self) -> STATS_TYPING:
+        return combine_stats(equip.stats for equip in self.equips)
+
     def to_json(self, full: bool = False) -> Dict:
         """Returns the JSON representation of this character.
 
@@ -104,15 +116,15 @@ class Character:
             'pure_secondary_stat': self.pure_secondary_stat,
         }
 
-        # Convert enums to strings
+        # Convert classes and enums to strings
         for k, v in full_repr.items():
-            if isinstance(v, Enum):
-                full_repr[k] = v.name
-            if isinstance(v, dict):
+            if hasattr(v, "to_json"):
+                full_repr[k] = v.to_json()
+            elif isinstance(v, dict):
                 new_v = {}
                 for a, b in v.items():
-                    new_a = a.name if isinstance(a, Enum) else a
-                    new_b = b.name if isinstance(b, Enum) else b
+                    new_a = a.to_json if hasattr(a, "to_json") else a
+                    new_b = b.to_json if isinstance(b, "to_json") else b
                     new_v[new_a] = new_b
                 full_repr[k] = new_v
 

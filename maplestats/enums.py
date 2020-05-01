@@ -11,6 +11,9 @@ class MapleStatsEnum(Enum):
             return name
         return cls[name.upper()]
 
+    def to_json(self) -> str:
+        return self.name
+
 
 class World(MapleStatsEnum):
     """Enum representing all worlds."""
@@ -36,6 +39,7 @@ class Stat(MapleStatsEnum):
     LUK = auto()
     ATT = auto()
     MATT = auto()
+    DMG = auto()
     PCT_ALL = auto()
     PCT_STR = auto()
     PCT_DEX = auto()
@@ -181,3 +185,9 @@ class EquipType(MapleStatsEnum):
 
 EMPTY_INVENTORY: Dict[EquipType, Any] = {
     equip_type: None for equip_type in EquipType}
+
+WSE: Set[EquipType] = {
+    EquipType.WEAPON,
+    EquipType.SECONDARY,
+    EquipType.EMBLEM
+}
