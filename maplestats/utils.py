@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Dict, Iterator
+from typing import Any, Dict, Iterator, List, String, Union
 
 from maplestats.enums import Stat
 
@@ -23,3 +23,21 @@ def combine_stats(stats_iter: Iterator[STATS_TYPING]) -> STATS_TYPING:
                 combined_stats[stat] += value
 
     return combined_stats
+
+
+def jsonify(data: Union[Dict, List, String]) -> Union[Dict, List, String]:
+    """Converts data to JSON by calling `to_json()` for all nested objects which
+    have this attribute.
+    """
+
+    def _handle_value(val: Any) -> Any:
+        if isinstance(val, Dict):
+            for k, v in val.items():
+                val[k] = _handle_value(v)
+            return val
+        elif isinstance(val, List):
+            return [_handle_value(k) for k in val]
+
+        return val.to_json() if hasattr(val, "to_json") else val
+
+    return _handle_value(data)

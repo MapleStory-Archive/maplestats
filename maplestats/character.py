@@ -4,10 +4,11 @@ from typing import Any, Dict, Optional, Union
 from maplestats.enums import (
     World, Stat, ClassBranch, Classes, EquipType, EMPTY_INVENTORY)
 from maplestats.equipment import Equip
-from maplestats.utils import STATS_TYPING, combine_stats
-
+from maplestats.utils import STATS_TYPING, combine_stats, jsonify
 
 JOB_ADVANCEMENT_LEVEL_REQUIREMENTS = [10, 30, 60, 100, 200]
+
+LAST_MODIFIED_FILE_NAME = ".lastmodified"
 
 
 class Character:
@@ -35,6 +36,12 @@ class Character:
         self._in_reboot = world.is_reboot if world else False
         self._main_stat: Stat = self._char_class.main_stat
         self._secondary_stat: Stat = self._char_class.secondary_stat
+
+    @classmethod
+    def from_file(cls, file_path: str) -> 'Character':
+        with open(file_path, 'r') as f:
+            json_repr = json.load(f)
+        return cls(**json_repr)
 
     @property
     def char_class(self) -> Classes:
@@ -98,48 +105,29 @@ class Character:
             full: If True, includes all information about this character. If
                 False, returns a minimal representation of this character.
         """
-        minimal_repr = {
+        json_repr = {
             'name': self.name,
             'level': self.level,
             'char_class': self._char_class,
             'world': self._world,
             'equips': self.equips,
         }
-        if not full:
-            return minimal_repr
+        if full:
+            # Only data relevant to damage is included
+            json_repr.update({
+                'pure_main_stat': self.pure_main_stat,
+                'pure_secondary_stat': self.pure_secondary_stat,
+            })
 
-        # Only data relevant to damage is included
-        full_repr = {
-            **minimal_repr,
-            'pure_main_stat': self.pure_main_stat,
-            'pure_secondary_stat': self.pure_secondary_stat,
-        }
+        return jsonify(json_repr)
 
-        # Convert classes and enums to strings
-        for k, v in full_repr.items():
-            if hasattr(v, "to_json"):
-                full_repr[k] = v.to_json()
-            elif isinstance(v, dict):
-                new_v = {}
-                for a, b in v.items():
-                    new_a = a.to_json if hasattr(a, "to_json") else a
-                    new_b = b.to_json if hasattr(b, "to_json") else b
-                    new_v[new_a] = new_b
-                full_repr[k] = new_v
-
-        return full_repr
-
-    def write_json(self, file_path: str = None) -> None:
+    def save(self, file_path: str = None) -> None:
         file_path = file_path if file_path else f'{self.name}.json'
 
         with open(file_path, 'w') as f:
             json.dump(self.to_json(), f)
 
-    @classmethod
-    def from_file(cls, file_path: str) -> 'Character':
-        with open(file_path, 'r') as f:
-            json_repr = json.load(f)
-        return cls(**json_repr)
+        _write_last_modified(file_path)
 
 
 def _maybe_parse_equips(equips: Optional[Dict[Union[EquipType, str], Equip]]
@@ -150,3 +138,8 @@ def _maybe_parse_equips(equips: Optional[Dict[Union[EquipType, str], Equip]]
 
     return {EquipType.maybe_parse(equip_type): equip
             for equip_type, equip in equips.items()}
+
+
+def _write_last_modified(file_path: str) -> None:
+    with open(LAST_MODIFIED_FILE_NAME, 'w') as f:
+        f.write(file_path)
