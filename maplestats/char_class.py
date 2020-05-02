@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Optional, Set, Tuple, Type
 
-from maplestats.enums import CharClass, WeaponType
+from maplestats.enums import Classes, WeaponType
 
 
-class AbstractCharClass(ABC):
+class CharacterClass(ABC):
 
     def __init__(self):
-        self._enum: Optional[CharClass] = CharClass.get(
+        self._enum: Optional[Classes] = Classes.get(
             self.__class__.__name__.upper())
 
     @abstractmethod
@@ -15,36 +15,42 @@ class AbstractCharClass(ABC):
         raise NotImplementedError
 
     @property
-    def enum(self) -> Optional[CharClass]:
+    def enum(self) -> Optional[Classes]:
         return self._enum
 
 
-class Buccaneer(AbstractCharClass):
+class Beginner(CharacterClass):
+
+    def weapon(self) -> WeaponType:
+        return WeaponType.DAGGER
+
+
+class Buccaneer(Beginner):
 
     def weapon(self) -> WeaponType:
         return WeaponType.KNUCKLE
 
 
-_CHARCLASS_ABCS: Set[Type[AbstractCharClass]] = {
+_CLASSES: Set[Type[CharacterClass]] = {
+    Beginner,
     Buccaneer,
 }
 
 
-def _generate_enum_abc_mappings(abcs: Set[Type[AbstractCharClass]]
-                                ) -> Tuple[Dict, Dict]:
+def _generate_class_enum_mappings(classes: Set[Type[CharacterClass]]
+                                  ) -> Tuple[Dict, Dict]:
     """Generates a mapping from CharClass enum to AbstractCharClass and vice
     versa.
     """
-    abc_to_enum: Dict[Type[AbstractCharClass], CharClass] = {}
-    enum_to_abc: Dict[CharClass, Type[AbstractCharClass]] = {}
+    class_to_enum: Dict[Type[CharacterClass], Classes] = {}
+    enum_to_class: Dict[Classes, Type[CharacterClass]] = {}
 
-    for abc in abcs:
-        if abc.enum:
-            abc_to_enum[abc] = abc.enum
-            enum_to_abc[abc.enum] = abc
+    for cls in classes:
+        if cls.enum:
+            class_to_enum[cls] = cls.enum
+            enum_to_class[cls.enum] = cls
 
-    return abc_to_enum, enum_to_abc
+    return class_to_enum, enum_to_class
 
 
-CHARCLASS_ABC_TO_ENUM, CHARCLASS_ENUM_TO_ABC = (
-    _generate_enum_abc_mappings(_CHARCLASS_ABCS))
+CLASS_TO_ENUM, ENUM_TO_CLASS = _generate_class_enum_mappings(_CLASSES)

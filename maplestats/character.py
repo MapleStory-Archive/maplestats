@@ -2,7 +2,7 @@ import json
 from typing import Any, Dict, Optional, Union
 
 from maplestats.enums import (
-    World, Stat, ClassBranch, CharClass, EquipType, EMPTY_INVENTORY)
+    World, Stat, ClassBranch, Classes, EquipType, EMPTY_INVENTORY)
 from maplestats.equipment import Equip
 from maplestats.utils import STATS_TYPING, combine_stats
 
@@ -16,7 +16,7 @@ class Character:
             self,
             name: str,
             level: int = 1,
-            char_class: Union[CharClass, str] = CharClass.BEGINNER,
+            char_class: Union[Classes, str] = Classes.BEGINNER,
             world: World = None,
             equips: Dict[Union[EquipType, str], Optional[Equip]] = None,
             *args,
@@ -28,7 +28,7 @@ class Character:
 
         self.name = name
         self.level = level
-        self._char_class: CharClass = CharClass.maybe_parse(char_class)
+        self._char_class: Classes = Classes.maybe_parse(char_class)
         self._world = world
         self.equips = _maybe_parse_equips(equips)
 
@@ -37,12 +37,12 @@ class Character:
         self._secondary_stat: Stat = self._char_class.secondary_stat
 
     @property
-    def char_class(self) -> CharClass:
+    def char_class(self) -> Classes:
         return self._char_class
 
     @char_class.setter
-    def char_class(self, new_class: CharClass):
-        self._char_class: CharClass = CharClass.maybe_parse(new_class)
+    def char_class(self, new_class: Classes):
+        self._char_class: Classes = Classes.maybe_parse(new_class)
         self._main_stat = self._char_class.main_stat
         self._secondary_stat = self._char_class.secondary_stat
 

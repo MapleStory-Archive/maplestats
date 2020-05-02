@@ -4,5 +4,5 @@ from maplestats.enums import WeaponType
 
 
 WEAPON_MULTIPLIERS: Dict[WeaponType, float] ={
-    WeaponType.KNUCKLE: 1.6,
+    WeaponType.KNUCKLE: 1.7,
 }

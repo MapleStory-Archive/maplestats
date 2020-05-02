@@ -88,7 +88,7 @@ class ClassBranch(MapleStatsEnum):
     PIRATE = auto()
 
 
-class CharClass(MapleStatsEnum):
+class Classes(MapleStatsEnum):
     """Enum representing character classes."""
     BEGINNER = auto()
     ARAN = auto()
@@ -142,25 +142,25 @@ class CharClass(MapleStatsEnum):
         return Stat.DEX
 
 
-CLASS_TO_BRANCH: Dict[CharClass, ClassBranch] = {
-    CharClass.BEGINNER: ClassBranch.BEGINNER,
-    CharClass.PATHFINDER: ClassBranch.BOWMAN,
-    CharClass.BUCCANEER: ClassBranch.PIRATE,
-    CharClass.KAISER: ClassBranch.WARRIOR,
+CLASS_TO_BRANCH: Dict[Classes, ClassBranch] = {
+    Classes.BEGINNER: ClassBranch.BEGINNER,
+    Classes.PATHFINDER: ClassBranch.BOWMAN,
+    Classes.BUCCANEER: ClassBranch.PIRATE,
+    Classes.KAISER: ClassBranch.WARRIOR,
 }
 
-STR_PIRATES: Set[CharClass] = {
-    CharClass.SHADE,
-    CharClass.BUCCANEER,
-    CharClass.CANNON_MASTER,
-    CharClass.THUNDER_BREAKER,
-    CharClass.ARK,
+STR_PIRATES: Set[Classes] = {
+    Classes.SHADE,
+    Classes.BUCCANEER,
+    Classes.CANNON_MASTER,
+    Classes.THUNDER_BREAKER,
+    Classes.ARK,
 }
 
-DEX_PIRATES: Set[CharClass] = {
-    CharClass.CORSAIR,
-    CharClass.JETT,
-    CharClass.ANGELIC_BUSTER,
+DEX_PIRATES: Set[Classes] = {
+    Classes.CORSAIR,
+    Classes.JETT,
+    Classes.ANGELIC_BUSTER,
 }
 
 
@@ -219,4 +219,8 @@ WSE: Set[EquipType] = {
 
 class WeaponType(MapleStatsEnum):
 
+    SWORD_2H = auto()
+    DAGGER = auto()
     KNUCKLE = auto()
+    ANCIENT_BOW = auto()
+    TUNER = auto()
