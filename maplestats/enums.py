@@ -116,11 +116,21 @@ class Class(MapleStatsEnum):
     WIND_ARCHER = auto()
     NIGHT_WALKER = auto()
     THUNDER_BREAKER = auto()
+    WILD_HUNTER = auto()
+    MECHANIC = auto()
+    BATTLE_MAGE = auto()
+    BLASTER = auto()
+    DEMON_SLAYER = auto()
+    DEMON_AVENGER = auto()
     KAISER = auto()
     ANGELIC_BUSTER = auto()
     ARK = auto()
     ILIUM = auto()
     ADELE = auto()
+    CADENA = auto()
+    KINESIS = auto()
+    KANNA = auto()
+    HAYATO = auto()
 
     @property
     def branch(self) -> JobBranch:
