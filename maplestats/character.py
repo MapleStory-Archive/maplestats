@@ -17,11 +17,11 @@ class Character:
             self,
             name: str,
             level: int = 1,
-            char_class: Union[Class, str] = Class.BEGINNER,
+            character_class: Union[Class, str] = Class.BEGINNER,
             world: World = None,
+            link_skills: Dict[Union[Class, str], int] = None,
             equips: Dict[Union[EquipType, str],
                          Optional[Union[Equip, Dict]]] = None,
-            link_skills: Dict[Union[Class, str], int] = None,
             *args,
             **kwargs,
     ):
@@ -31,14 +31,16 @@ class Character:
 
         self.name = name
         self.level = level
-        self._char_class: Class = Class.maybe_parse(char_class)
+        self._character_class: Class = Class.maybe_parse(character_class)
         self._world = world
-        self.equips = parse_json(equips, key_class=EquipType, value_class=Equip)
-        self.link_skills = parse_json(link_skills, key_class=Class)
+        self.link_skills = parse_json(link_skills, key_class=Class
+                                      ) if link_skills else {}
+        self.equips = parse_json(equips, key_class=EquipType, value_class=Equip
+                                 ) if equips else EMPTY_INVENTORY
 
         self._in_reboot = world.is_reboot if world else False
-        self._main_stat: Stat = self._char_class.main_stat
-        self._secondary_stat: Stat = self._char_class.secondary_stat
+        self._main_stat: Stat = self._character_class.main_stat
+        self._secondary_stat: Stat = self._character_class.secondary_stat
 
     @classmethod
     def from_file(cls, file_path: str) -> 'Character':
@@ -48,13 +50,13 @@ class Character:
 
     @property
     def char_class(self) -> Class:
-        return self._char_class
+        return self._character_class
 
     @char_class.setter
     def char_class(self, new_class: Class):
-        self._char_class: Class = Class.maybe_parse(new_class)
-        self._main_stat = self._char_class.main_stat
-        self._secondary_stat = self._char_class.secondary_stat
+        self._character_class: Class = Class.maybe_parse(new_class)
+        self._main_stat = self._character_class.main_stat
+        self._secondary_stat = self._character_class.secondary_stat
 
     @property
     def world(self) -> World:
@@ -75,7 +77,7 @@ class Character:
 
     @property
     def class_branch(self) -> JobBranch:
-        return self._char_class.branch
+        return self._character_class.branch
 
     @property
     def pure_main_stat(self) -> int:
@@ -99,7 +101,15 @@ class Character:
 
     @property
     def stats_from_equips(self) -> STATS_TYPING:
-        return combine_stats(equip.stats for equip in self.equips)
+        return combine_stats(equip.stats for equip in self.equips.values()
+                             if equip is not None)
+
+    def equip(self, equip: Equip) -> Optional[Equip]:
+        """Equip an item and return the unequipped item."""
+        equip_type = equip.equip_type
+        unequipped = self.equips[equip_type]
+        self.equips[equip_type] = equip
+        return unequipped
 
     def to_json(self, full: bool = False) -> Dict[str, Any]:
         """Returns the JSON representation of this character.
@@ -111,7 +121,7 @@ class Character:
         json_repr = {
             'name': self.name,
             'level': self.level,
-            'char_class': self._char_class,
+            'character_class': self._character_class,
             'world': self._world,
             'equips': self.equips,
         }

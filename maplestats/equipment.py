@@ -34,6 +34,10 @@ class Equip:
 
         self._stats = self._get_stats()
 
+    @property
+    def equip_type(self) -> EquipType:
+        return self._equip_type
+
     def _get_stats(self) -> STATS_TYPING:
         all_lines = self._potential + self._bonus_potential + self._bonus_stats
         return combine_stats([self._base_stats, self._scroll_stats] + [
