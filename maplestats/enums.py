@@ -78,7 +78,7 @@ FLOAT_VALUED_STATS: Set[Stat] = {
 }
 
 
-class ClassBranch(MapleStatsEnum):
+class JobBranch(MapleStatsEnum):
     """Enum representing the five class branches."""
     BEGINNER = auto()
     WARRIOR = auto()
@@ -88,7 +88,7 @@ class ClassBranch(MapleStatsEnum):
     PIRATE = auto()
 
 
-class Classes(MapleStatsEnum):
+class Class(MapleStatsEnum):
     """Enum representing character classes."""
     BEGINNER = auto()
     ARAN = auto()
@@ -97,9 +97,15 @@ class Classes(MapleStatsEnum):
     PHANTOM = auto()
     SHADE = auto()
     LUMINOUS = auto()
+    IL_ARCHMAGE = auto()
+    FP_ARCHMAGE = auto()
+    BISHOP = auto()
     BOWMASTER = auto()
     MARKSMAN = auto()
     PATHFINDER = auto()
+    NIGHT_LORD = auto()
+    SHADOWER = auto()
+    DUAL_BLADE = auto()
     BUCCANEER = auto()
     CORSAIR = auto()
     CANNON_MASTER = auto()
@@ -117,50 +123,50 @@ class Classes(MapleStatsEnum):
     ADELE = auto()
 
     @property
-    def branch(self) -> ClassBranch:
+    def branch(self) -> JobBranch:
         """Returns the branch of this class."""
         return CLASS_TO_BRANCH[self]
 
     @property
     def main_stat(self) -> Stat:
-        if self.branch == ClassBranch.MAGICIAN:
+        if self.branch == JobBranch.MAGICIAN:
             return Stat.INT
-        if self.branch == ClassBranch.BOWMAN or (
-                self.branch == ClassBranch.PIRATE and self in DEX_PIRATES):
+        if self.branch == JobBranch.BOWMAN or (
+                self.branch == JobBranch.PIRATE and self in DEX_PIRATES):
             return Stat.DEX
-        if self.branch == ClassBranch.THIEF:
+        if self.branch == JobBranch.THIEF:
             return Stat.LUK
         return Stat.STR
 
     @property
     def secondary_stat(self) -> Stat:
-        if self.branch == ClassBranch.MAGICIAN:
+        if self.branch == JobBranch.MAGICIAN:
             return Stat.LUK
-        if self.branch == ClassBranch.BOWMAN or (
-                self.branch == ClassBranch.PIRATE and self in DEX_PIRATES):
+        if self.branch == JobBranch.BOWMAN or (
+                self.branch == JobBranch.PIRATE and self in DEX_PIRATES):
             return Stat.STR
         return Stat.DEX
 
 
-CLASS_TO_BRANCH: Dict[Classes, ClassBranch] = {
-    Classes.BEGINNER: ClassBranch.BEGINNER,
-    Classes.PATHFINDER: ClassBranch.BOWMAN,
-    Classes.BUCCANEER: ClassBranch.PIRATE,
-    Classes.KAISER: ClassBranch.WARRIOR,
+CLASS_TO_BRANCH: Dict[Class, JobBranch] = {
+    Class.BEGINNER: JobBranch.BEGINNER,
+    Class.PATHFINDER: JobBranch.BOWMAN,
+    Class.BUCCANEER: JobBranch.PIRATE,
+    Class.KAISER: JobBranch.WARRIOR,
 }
 
-STR_PIRATES: Set[Classes] = {
-    Classes.SHADE,
-    Classes.BUCCANEER,
-    Classes.CANNON_MASTER,
-    Classes.THUNDER_BREAKER,
-    Classes.ARK,
+STR_PIRATES: Set[Class] = {
+    Class.SHADE,
+    Class.BUCCANEER,
+    Class.CANNON_MASTER,
+    Class.THUNDER_BREAKER,
+    Class.ARK,
 }
 
-DEX_PIRATES: Set[Classes] = {
-    Classes.CORSAIR,
-    Classes.JETT,
-    Classes.ANGELIC_BUSTER,
+DEX_PIRATES: Set[Class] = {
+    Class.CORSAIR,
+    Class.JETT,
+    Class.ANGELIC_BUSTER,
 }
 
 

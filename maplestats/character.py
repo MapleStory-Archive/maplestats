@@ -2,7 +2,7 @@ import json
 from typing import Any, Dict, Optional, Union
 
 from maplestats.enums import (
-    World, Stat, ClassBranch, Classes, EquipType, EMPTY_INVENTORY)
+    World, Stat, JobBranch, Class, EquipType, EMPTY_INVENTORY)
 from maplestats.equipment import Equip
 from maplestats.utils import STATS_TYPING, combine_stats, jsonify
 
@@ -17,7 +17,7 @@ class Character:
             self,
             name: str,
             level: int = 1,
-            char_class: Union[Classes, str] = Classes.BEGINNER,
+            char_class: Union[Class, str] = Class.BEGINNER,
             world: World = None,
             equips: Dict[Union[EquipType, str], Optional[Equip]] = None,
             *args,
@@ -29,7 +29,7 @@ class Character:
 
         self.name = name
         self.level = level
-        self._char_class: Classes = Classes.maybe_parse(char_class)
+        self._char_class: Class = Class.maybe_parse(char_class)
         self._world = world
         self.equips = _maybe_parse_equips(equips)
 
@@ -44,12 +44,12 @@ class Character:
         return cls(**json_repr)
 
     @property
-    def char_class(self) -> Classes:
+    def char_class(self) -> Class:
         return self._char_class
 
     @char_class.setter
-    def char_class(self, new_class: Classes):
-        self._char_class: Classes = Classes.maybe_parse(new_class)
+    def char_class(self, new_class: Class):
+        self._char_class: Class = Class.maybe_parse(new_class)
         self._main_stat = self._char_class.main_stat
         self._secondary_stat = self._char_class.secondary_stat
 
@@ -71,7 +71,7 @@ class Character:
         return 5
 
     @property
-    def class_branch(self) -> ClassBranch:
+    def class_branch(self) -> JobBranch:
         return self._char_class.branch
 
     @property

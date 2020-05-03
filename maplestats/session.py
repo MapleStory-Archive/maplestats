@@ -10,7 +10,7 @@ from maplestats.session_utils import load_last_modified
 
 # Useful enums
 # pylint: disable=unused-import
-from maplestats.enums import World, Stat, Classes, EquipType, WeaponType
+from maplestats.enums import World, Stat, Class, EquipType, WeaponType
 
 
 me = load_last_modified()
