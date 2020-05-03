@@ -34,3 +34,4 @@ somi.equip(Equip(
     bonus_stats=[],
 ))
 
+somi.save()

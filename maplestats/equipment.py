@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Tuple, Union
 
 from maplestats.enums import Stat, EquipType
-from maplestats.utils import STATS_TYPING, combine_stats
+from maplestats.utils import STATS_TYPING, combine_stats, jsonify
 
 
 class Equip:
@@ -48,11 +48,11 @@ class Equip:
         return self._stats
 
     def to_json(self) -> Dict[str, Any]:
-        return {
+        return jsonify({
             'name': self.name,
             'equip_type': self._equip_type,
             'base_stats': self._base_stats,
             'potential': self._potential,
             'bonus_potential': self._bonus_potential,
             'bonus_stats': self._bonus_stats,
-        }
+        })

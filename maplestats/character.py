@@ -123,6 +123,7 @@ class Character:
             'level': self.level,
             'character_class': self._character_class,
             'world': self._world,
+            'link_skills': self.link_skills,
             'equips': self.equips,
         }
         if full:
