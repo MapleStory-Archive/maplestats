@@ -41,3 +41,20 @@ def jsonify(data: Union[Dict, List, String]) -> Union[Dict, List, String]:
         return val.to_json() if hasattr(val, "to_json") else val
 
     return _handle_value(data)
+
+
+def parse_json(
+        data: Dict, key_class: Any = None, value_class: Any = None) -> Dict:
+    """Parse some jsonified data."""
+    if key_class:
+        assert hasattr(key_class, "maybe_parse")
+
+    def _parse_key(k: Any) -> Any:
+        return key_class.maybe_parse(k) if key_class else k
+
+    def _parse_value(v: Any) -> Any:
+        if not v:
+            return v
+        return value_class(**v) if value_class else v
+
+    return {_parse_key(key): _parse_value(value) for key, value in data.items()}

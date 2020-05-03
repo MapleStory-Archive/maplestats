@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional, Union
 from maplestats.enums import (
     World, Stat, JobBranch, Class, EquipType, EMPTY_INVENTORY)
 from maplestats.equipment import Equip
-from maplestats.utils import STATS_TYPING, combine_stats, jsonify
+from maplestats.utils import STATS_TYPING, combine_stats, jsonify, parse_json
 
 JOB_ADVANCEMENT_LEVEL_REQUIREMENTS = [10, 30, 60, 100, 200]
 
@@ -19,7 +19,9 @@ class Character:
             level: int = 1,
             char_class: Union[Class, str] = Class.BEGINNER,
             world: World = None,
-            equips: Dict[Union[EquipType, str], Optional[Equip]] = None,
+            equips: Dict[Union[EquipType, str],
+                         Optional[Union[Equip, Dict]]] = None,
+            link_skills: Dict[Union[Class, str], int] = None,
             *args,
             **kwargs,
     ):
@@ -31,7 +33,8 @@ class Character:
         self.level = level
         self._char_class: Class = Class.maybe_parse(char_class)
         self._world = world
-        self.equips = _maybe_parse_equips(equips)
+        self.equips = parse_json(equips, key_class=EquipType, value_class=Equip)
+        self.link_skills = parse_json(link_skills, key_class=Class)
 
         self._in_reboot = world.is_reboot if world else False
         self._main_stat: Stat = self._char_class.main_stat
@@ -128,16 +131,6 @@ class Character:
             json.dump(self.to_json(), f)
 
         _write_last_modified(file_path)
-
-
-def _maybe_parse_equips(equips: Optional[Dict[Union[EquipType, str], Equip]]
-                        ) -> Dict[EquipType, Optional[Equip]]:
-    """Maybe parse equips."""
-    if not equips or not isinstance(equips, dict):
-        return EMPTY_INVENTORY
-
-    return {EquipType.maybe_parse(equip_type): equip
-            for equip_type, equip in equips.items()}
 
 
 def _write_last_modified(file_path: str) -> None:
